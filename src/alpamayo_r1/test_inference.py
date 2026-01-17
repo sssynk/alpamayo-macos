@@ -23,7 +23,22 @@ import numpy as np
 from alpamayo_r1.models.alpamayo_r1 import AlpamayoR1
 from alpamayo_r1.load_physical_aiavdataset import load_physical_aiavdataset
 from alpamayo_r1 import helper
+from alpamayo_r1.device_utils import (
+    get_default_device,
+    get_default_dtype,
+    set_seed,
+    setup_mps_fallback,
+    autocast_context,
+)
 
+
+# Setup MPS fallback for macOS
+setup_mps_fallback()
+
+# Get the best available device and dtype
+device = get_default_device()
+dtype = get_default_dtype(device)
+print(f"Using device: {device}, dtype: {dtype}")
 
 # Example clip ID
 clip_id = "030c760c-ae38-49aa-9ad8-f5650a545d26"
@@ -32,7 +47,7 @@ data = load_physical_aiavdataset(clip_id, t0_us=5_100_000)
 print("Dataset loaded.")
 messages = helper.create_message(data["image_frames"].flatten(0, 1))
 
-model = AlpamayoR1.from_pretrained("nvidia/Alpamayo-R1-10B", dtype=torch.bfloat16).to("cuda")
+model = AlpamayoR1.from_pretrained("nvidia/Alpamayo-R1-10B", dtype=dtype).to(device)
 processor = helper.get_processor(model.tokenizer)
 
 inputs = processor.apply_chat_template(
@@ -49,10 +64,10 @@ model_inputs = {
     "ego_history_rot": data["ego_history_rot"],
 }
 
-model_inputs = helper.to_device(model_inputs, "cuda")
+model_inputs = helper.to_device(model_inputs, device)
 
-torch.cuda.manual_seed_all(42)
-with torch.autocast("cuda", dtype=torch.bfloat16):
+set_seed(42)
+with autocast_context(device):
     pred_xyz, pred_rot, extra = model.sample_trajectories_from_data_with_vlm_rollout(
         data=model_inputs,
         top_p=0.98,

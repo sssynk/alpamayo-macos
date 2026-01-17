@@ -123,7 +123,7 @@ class UnicycleAccelCurvatureActionSpace(ActionSpace):
         return torch.all(is_accel_within_bounds & is_kappa_within_bounds, dim=-1)
 
     @torch.no_grad()
-    @torch.amp.autocast(device_type="cuda", enabled=False)
+    @torch.amp.autocast(device_type="cpu", enabled=False)
     def _v_to_a(self, v: torch.Tensor) -> torch.Tensor:
         """Compute the acceleration from the velocity.
 
@@ -160,7 +160,7 @@ class UnicycleAccelCurvatureActionSpace(ActionSpace):
         return a
 
     @torch.no_grad()
-    @torch.amp.autocast(device_type="cuda", enabled=False)
+    @torch.amp.autocast(device_type="cpu", enabled=False)
     def _theta_v_a_to_kappa(
         self,
         theta: torch.Tensor,
@@ -205,7 +205,7 @@ class UnicycleAccelCurvatureActionSpace(ActionSpace):
         )
 
     @torch.no_grad()
-    @torch.amp.autocast(device_type="cuda", enabled=False)
+    @torch.amp.autocast(device_type="cpu", enabled=False)
     def estimate_t0_states(
         self, traj_history_xyz: torch.Tensor, traj_history_rot: torch.Tensor
     ) -> dict[str, torch.Tensor]:
@@ -223,7 +223,7 @@ class UnicycleAccelCurvatureActionSpace(ActionSpace):
 
     @torch.no_grad()
     @torch._dynamo.disable()
-    @torch.amp.autocast(device_type="cuda", enabled=False)
+    @torch.amp.autocast(device_type="cpu", enabled=False)
     def traj_to_action(
         self,
         traj_history_xyz: torch.Tensor,

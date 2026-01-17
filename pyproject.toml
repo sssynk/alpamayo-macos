@@ -1,7 +1,7 @@
 [project]
 name = "alpamayo_r1"
-version = "0.1.0"
-requires-python = "==3.12.*"
+version = "0.1.0-macos"
+requires-python = ">=3.12"
 dependencies = [
   "accelerate>=1.12.0",
   "av>=16.0.1",
@@ -11,9 +11,14 @@ dependencies = [
   "pandas>=2.3.3",
   "physical_ai_av>=0.1.0",
   "pillow>=12.0.0",
-  "torch==2.8.0",
-  "torchvision>=0.23.0",
-  "transformers==4.57.1",
+  "torch>=2.0.0",
+  "torchvision>=0.15.0",
+  "transformers>=4.40.0",
+]
+
+[project.optional-dependencies]
+# CUDA-specific dependencies (not available on macOS)
+cuda = [
   "flash-attn>=2.8.3",
 ]
 
@@ -30,7 +35,8 @@ dev = [
 ]
 
 [tool.uv]
-no-build-isolation-package = ["flash-attn"]
+# Only needed for CUDA installs with flash-attn
+# no-build-isolation-package = ["flash-attn"]
 
 [tool.ruff]
 line-length = 100
