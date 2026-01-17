@@ -43,7 +43,7 @@ export PATH="$HOME/.local/bin:$PATH"
 ### 2. Clone this repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/alpamayo-macos.git
+git clone https://github.com/sssynk/alpamayo-macos.git
 cd alpamayo-macos
 ```
 
